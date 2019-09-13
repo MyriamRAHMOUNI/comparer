@@ -21,15 +21,16 @@ def delta_Neq(df1, df2):
     return dfd
 
 def plot_delta_Neq(dfd):
+    forma = str(input("choisir forma de figure parmi eps, pdf, pgf, png, ps, raw, rgba, svg, svgz :"))
     pyplot.plot('residus', 'Delta_Neq_abs', data = dfd, color = 'green', linestyle = 'dashed', linewidth = 2, marker = 'o', markerfacecolor = 'blue', markersize = 5)
     pyplot.xlabel('Residus')
     pyplot.ylabel('|Delta_Neq|')
-    pyplot.savefig('Delta_Neq.png')
+    pyplot.savefig('Delta_Neq', format = forma)
 
-def delta_pb():                 
+def delta_pb(df1, df2):                 
     pass
 
-def plot_delta_pb():
+def plot_delta_pb(dfr):
     pass
 
 class Fichier:
@@ -94,9 +95,7 @@ if __name__ == "__main__":
         df_delta_Neq.to_csv("Delta_Neq", sep = " ",index=False)
           
         print("-------Ficher Delta_Neq crée------------")
-        
         plot_delta_Neq(df_delta_Neq)
-        
         print("-------Figure Delta_Neq.png crée--------")
     
    
