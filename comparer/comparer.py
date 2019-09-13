@@ -2,6 +2,14 @@ import sys
 import pandas as pd
 from matplotlib import pyplot
 
+def Verif_entete(df):
+    if str(df.columns.values) == "['a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 'l' 'm' 'n' 'o' 'p']" or str(df.columns.values) == "['resid' 'Neq']":
+        bol = True 
+    else: 
+        bol= False 
+    return bol
+    
+
 def delta_Neq(df1, df2):
     df1.columns = [ 'residus', 'Neq_1' ]
     df2.columns = [ 'residus', 'Neq_2' ]
@@ -15,8 +23,28 @@ def plot_delta_Neq(dfd):
     pyplot.ylabel('|Delta_Neq|')
     pyplot.savefig('Delta_Neq.png')
 
-def delta_pb()                 
+def delta_pb():                 
+    pass
 
+def plot_delta_pb():
+    pass
+
+class Fichier:
+    def __init__(self, nl=0, ncl=0, ent=True):
+        self.nbr_ligne = nl
+        self.nbr_colonne = ncl
+        self.entete = ent
+    def verif_sequences(self, df1, df2, df3): # les df sont des instances de Fichier
+        if self.nbr_ligne != df1.nbr_ligne or self.nbr_ligne != df2.nbr_ligne or self.nbr_ligne != df3.nbr_ligne: 
+            raise Exception('Les séquences ne sont pas de même longueur')
+        else: print("Longueur des séquences PB : ", self.nbr_ligne)  
+    def verif_format_Neq(self):
+        if self.nbr_colonne != 2 or self.entete == False: 
+            raise Exception('Un fichier .Neq n est pas au bon format')
+    def verif_format_count(self):      
+        if self.nbr_colonne != 16 or self.entete != True: 
+            raise Exception('Un fichier .count n est pas au bon format')
+    
 if __name__ == "__main__":
     print("Inputed files:", sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])    
     
@@ -25,6 +53,35 @@ if __name__ == "__main__":
     df_Neq_2 = pd.read_csv(sys.argv[3], sep='\s+')
     df_count_2 = pd.read_csv(sys.argv[4], sep='\s+')
     
+    nl_Neq_1 = df_Neq_1.shape[0]    
+    ncl_Neq_1 = df_Neq_1.shape[1]
+    nl_count_1 = df_count_1.shape[0]
+    ncl_count_1 = df_count_1.shape[1]
+
+    nl_Neq_2 = df_Neq_2.shape[0]    
+    ncl_Neq_2 = df_Neq_2.shape[1]
+    nl_count_2 = df_count_2.shape[0]
+    ncl_count_2 = df_count_2.shape[1]
+    
+    ent_count_1 = Verif_entete(df_count_1)
+    ent_count_2 = Verif_entete(df_count_2)  
+    ent_Neq_1 = Verif_entete(df_Neq_1)
+    ent_Neq_2 = Verif_entete(df_Neq_2)
+
+    Neq_1 = Fichier(nl_Neq_1, ncl_Neq_1, ent_Neq_1)
+    count_1 = Fichier(nl_count_1, ncl_count_1, ent_count_1)
+    Neq_2 = Fichier(nl_Neq_2, ncl_Neq_2, ent_Neq_2)
+    count_2 = Fichier(nl_count_2, ncl_count_2, ent_count_2)    
+
+    Neq_1.verif_sequences(Neq_2, count_1, count_2)
+
+    print("--------Vérification format-------------")
+ 
+    Neq_1.verif_format_Neq()
+    count_1.verif_format_count()  
+    Neq_2.verif_format_Neq() 
+    count_2.verif_format_count() 
+
     df_delta_Neq = delta_Neq(df_Neq_1, df_Neq_2)
     df_delta_Neq.to_csv("Delta_Neq", sep = " ",index=False)
       
@@ -34,7 +91,14 @@ if __name__ == "__main__":
     
     print("-------Figure Delta_Neq.png crée--------")
     
+   
+        
 
+    
+
+    
+    
+    
     
     
    
