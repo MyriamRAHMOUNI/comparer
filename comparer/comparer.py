@@ -2,6 +2,9 @@ import sys
 import pandas as pd
 from matplotlib import pyplot
 
+def help():
+    print ("Bienvenue! si vous avez fait de la dynamique moléculaire sur des séquences de meme longueure mais qui varies entre elle (exemple variant et wilde type) cet outils vous permetra de comprer vos sorties pbxplore. NOTEZ qu'il faut entrer les fichiers dans le bon ordre", "exemple d'execution : python3 comparer.py DM-1.Neq DM-1.count DM-2.PB.Neq DM-2.PB.count")
+
 def Verif_entete(df):
     if str(df.columns.values) == "['a' 'b' 'c' 'd' 'e' 'f' 'g' 'h' 'i' 'j' 'k' 'l' 'm' 'n' 'o' 'p']" or str(df.columns.values) == "['resid' 'Neq']":
         bol = True 
@@ -46,50 +49,55 @@ class Fichier:
             raise Exception('Un fichier .count n est pas au bon format')
     
 if __name__ == "__main__":
-    print("Inputed files:", sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])    
-    
-    df_Neq_1 = pd.read_csv(sys.argv[1], sep='\s+')
-    df_count_1 = pd.read_csv(sys.argv[2], sep='\s+')
-    df_Neq_2 = pd.read_csv(sys.argv[3], sep='\s+')
-    df_count_2 = pd.read_csv(sys.argv[4], sep='\s+')
-    
-    nl_Neq_1 = df_Neq_1.shape[0]    
-    ncl_Neq_1 = df_Neq_1.shape[1]
-    nl_count_1 = df_count_1.shape[0]
-    ncl_count_1 = df_count_1.shape[1]
+    if sys.argv[1] == "help":
+       help()
+    elif len(sys.argv) != 5: 
+        raise Exception('Entrer le bon nombre de fichier')
+    else: 
+        print("Inputed files:", sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4])    
+        
+        df_Neq_1 = pd.read_csv(sys.argv[1], sep='\s+')
+        df_count_1 = pd.read_csv(sys.argv[2], sep='\s+')
+        df_Neq_2 = pd.read_csv(sys.argv[3], sep='\s+')
+        df_count_2 = pd.read_csv(sys.argv[4], sep='\s+')
+        
+        nl_Neq_1 = df_Neq_1.shape[0]    
+        ncl_Neq_1 = df_Neq_1.shape[1]
+        nl_count_1 = df_count_1.shape[0]
+        ncl_count_1 = df_count_1.shape[1]
 
-    nl_Neq_2 = df_Neq_2.shape[0]    
-    ncl_Neq_2 = df_Neq_2.shape[1]
-    nl_count_2 = df_count_2.shape[0]
-    ncl_count_2 = df_count_2.shape[1]
-    
-    ent_count_1 = Verif_entete(df_count_1)
-    ent_count_2 = Verif_entete(df_count_2)  
-    ent_Neq_1 = Verif_entete(df_Neq_1)
-    ent_Neq_2 = Verif_entete(df_Neq_2)
+        nl_Neq_2 = df_Neq_2.shape[0]    
+        ncl_Neq_2 = df_Neq_2.shape[1]
+        nl_count_2 = df_count_2.shape[0]
+        ncl_count_2 = df_count_2.shape[1]
+        
+        ent_count_1 = Verif_entete(df_count_1)
+        ent_count_2 = Verif_entete(df_count_2)  
+        ent_Neq_1 = Verif_entete(df_Neq_1)
+        ent_Neq_2 = Verif_entete(df_Neq_2)
 
-    Neq_1 = Fichier(nl_Neq_1, ncl_Neq_1, ent_Neq_1)
-    count_1 = Fichier(nl_count_1, ncl_count_1, ent_count_1)
-    Neq_2 = Fichier(nl_Neq_2, ncl_Neq_2, ent_Neq_2)
-    count_2 = Fichier(nl_count_2, ncl_count_2, ent_count_2)    
+        Neq_1 = Fichier(nl_Neq_1, ncl_Neq_1, ent_Neq_1)
+        count_1 = Fichier(nl_count_1, ncl_count_1, ent_count_1)
+        Neq_2 = Fichier(nl_Neq_2, ncl_Neq_2, ent_Neq_2)
+        count_2 = Fichier(nl_count_2, ncl_count_2, ent_count_2)    
 
-    Neq_1.verif_sequences(Neq_2, count_1, count_2)
+        Neq_1.verif_sequences(Neq_2, count_1, count_2)
 
-    print("--------Vérification format-------------")
- 
-    Neq_1.verif_format_Neq()
-    count_1.verif_format_count()  
-    Neq_2.verif_format_Neq() 
-    count_2.verif_format_count() 
+        print("--------Vérification format-------------")
+     
+        Neq_1.verif_format_Neq()
+        count_1.verif_format_count()  
+        Neq_2.verif_format_Neq() 
+        count_2.verif_format_count() 
 
-    df_delta_Neq = delta_Neq(df_Neq_1, df_Neq_2)
-    df_delta_Neq.to_csv("Delta_Neq", sep = " ",index=False)
-      
-    print("-------Ficher Delta_Neq crée------------")
-    
-    plot_delta_Neq(df_delta_Neq)
-    
-    print("-------Figure Delta_Neq.png crée--------")
+        df_delta_Neq = delta_Neq(df_Neq_1, df_Neq_2)
+        df_delta_Neq.to_csv("Delta_Neq", sep = " ",index=False)
+          
+        print("-------Ficher Delta_Neq crée------------")
+        
+        plot_delta_Neq(df_delta_Neq)
+        
+        print("-------Figure Delta_Neq.png crée--------")
     
    
         
