@@ -97,8 +97,7 @@ if __name__ == "__main__":
         print("-------Ficher Delta_Neq crée------------")
         plot_delta_Neq(df_delta_Neq)
         print("-------Figure Delta_Neq.png crée--------")
-    
-   
+       
         
 
     
