@@ -5,7 +5,7 @@ from matplotlib import pyplot
 def help():
     print ("******************************************BIENVENUE*******************************************\n\nCet outil permet de comparer les résultats de dynamique moléculaire issue de l'analyse complète \nofferte par PBxplore d’une protéine et de variants ponctuels associés à une pathologie.\n\nNOTEZ qu'il faut entrer les arguments dans le bon ordre. Le dernier argument sert à spécifier\nun nom à vos sorties.\n\nExemple d'exécution :\npython3 comparer.py P-1.PB.Neq P-1.PB.count P-2.PB.Neq P-2.PB.count P-1_VS_P-2 \n\n**********************************************************************************************")
 
-## Fonction qui retourne et enregiste en .txt une "dataframe" contenant quatres colonnes: residus, Neq_1, Neq_2 et Delta_Neq_abs (valeur absolue de Neq_1 - Neq_2)    
+## Fonction qui retourne et enregistre en .txt une "data frame" contenant quatre colonnes: residus, Neq_1, Neq_2 et Delta_Neq_abs (valeur absolue de Neq_1 - Neq_2)    
 def delta_Neq(df1, df2,nom_sortie):
     df1.columns = [ 'residus', 'Neq_1' ]
     df2.columns = [ 'residus', 'Neq_2' ]
@@ -14,12 +14,12 @@ def delta_Neq(df1, df2,nom_sortie):
     dfd.to_csv(nom_sortie+"_Delta_Neq.txt", sep = " ",index=False)
     return dfd
 
-## Fonction qui permet de generer le plot |Delta_Neq| en fonction du Residus
+## Fonction qui permet de générer le plot |Delta_Neq| en fonction du Residus
 def plot_delta_Neq(dfd,nom_sortie):
-    pyplot.plot('residus', 'Delta_Neq_abs', data = dfd, color = 'green', linewidth = 2, marker = 'o', markersize = 2)
+    pyplot.plot('residus', 'Delta_Neq_abs', data = dfd, color = 'green')
     pyplot.xlabel('Residus')
     pyplot.ylabel('|Delta_Neq|')
-    pyplot.savefig(nom_sortie+'_Delta_Neq', format='png')
+    pyplot.savefig(nom_sortie+'_Delta_Neq.png', format='png')
     pyplot.clf() #vider le buffer pour que les images ne se superposent pas
 
 ## class pour les fichiers
@@ -31,13 +31,13 @@ class Fichier:
         self.nbr_colonne = ncl
         self.entete = ent
     
-    # Méthode qui verifie que les séquences PB sont bien de même longeur qu'on a donc bien le même nombre de residus 
+    # Méthode qui vérifie que les séquences PB sont bien de même longueur qu'on a donc bien le même nombre de résidus 
     def verif_sequences(self, df1, df2, df3): # les df sont des instances de Fichier
         if self.nbr_ligne != df1.nbr_ligne or self.nbr_ligne != df2.nbr_ligne or self.nbr_ligne != df3.nbr_ligne: 
             raise Exception('Les séquences ne sont pas de même longueur')
         else: print("\nLongueur des séquences PB : ", self.nbr_ligne)  
     
-    # Méthodes qui verifient les entêtes 
+    # Méthodes qui vérifient les entêtes 
     def verif_entete_Neq(self):
         if self.entete != "['resid' 'Neq']": 
             raise Exception('Un fichier .Neq n est pas au bon format')
@@ -54,7 +54,7 @@ class Data_count:
         self.dataframe = df
         self.nbr_seq = ns
     
-    #Methode qui calcule les delta-PB, enregistre le fichier .txt contenant les colonnes Residus et |Delta_PB| et enregisrte le plot |  Delta_PB| en fonction du Residus
+    #Méthode qui calcule le delta-PB, enregistre le fichier .txt contenant les colonnes Résidus et |Delta_PB| et enregistre le plot |  Delta_PB| en fonction du Residus
     def calcule_et_plot_delta_PB(self, data_count_2, nom_sortie):
         df_freq_1 = self.dataframe/self.nbr_seq 
         df_freq_2 = data_count_2.dataframe/data_count_2.nbr_seq
@@ -62,7 +62,7 @@ class Data_count:
         delta_pb = df_delta_pb.sum(axis=1) 
         delta_pb.columns = ['Residus', '|Delta_PB|']    
         delta_pb.to_csv(nom_sortie+"_Delta_PB.txt", sep = " ", header = True)     
-        pyplot.plot(delta_pb, linewidth = 2, marker = 'o', markersize = 2)
+        pyplot.plot(delta_pb)
         pyplot.xlabel('Residus')
         pyplot.ylabel('|Delta_PB|')
         pyplot.savefig(nom_sortie+"_Delta_PB.png", format='png')
