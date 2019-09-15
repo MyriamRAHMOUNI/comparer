@@ -27,12 +27,6 @@ def plot_delta_Neq(dfd):
     pyplot.ylabel('|Delta_Neq|')
     pyplot.savefig('Delta_Neq', format = forma)
 
-def delta_pb(df1, df2):                 
-    pass
-
-def plot_delta_pb(dfr):
-    pass
-
 class Fichier:
     def __init__(self, nl=0, ncl=0, ent=True):
         self.nbr_ligne = nl
@@ -48,7 +42,23 @@ class Fichier:
     def verif_format_count(self):      
         if self.nbr_colonne != 16 or self.entete != True: 
             raise Exception('Un fichier .count n est pas au bon format')
-    
+
+class Data_count:
+    def __init__(self, df = pd.DataFrame(), ns=0): 
+        self.dataframe = df
+        self.nbr_seq = ns
+    def calcule_et_plot_delta_PB(self, data_count_2):
+        df_freq_1 = self.dataframe/self.nbr_seq 
+        df_freq_2 = data_count_2.dataframe/data_count_2.nbr_seq
+        df_delta_pb = (df_freq_1 - df_freq_2).abs()
+        delta_pb = df_delta_pb.sum(axis=1) 
+        delta_pb.columns = ['Residus', '|Delta_PB|']    
+        delta_pb.to_csv("Delta_PB", sep = " ", header = True)     
+        pyplot.plot(delta_pb)
+        pyplot.xlabel('Residus')
+        pyplot.ylabel('|Delta_PB|')
+        pyplot.savefig('Delta_PB')
+
 if __name__ == "__main__":
     if sys.argv[1] == "help":
        help()
@@ -98,8 +108,13 @@ if __name__ == "__main__":
         plot_delta_Neq(df_delta_Neq)
         print("-------Figure Delta_Neq.png crée--------")
        
-        
+        data_count_1 = Data_count(df_count_1, df_count_1.iloc[3,:].sum(axis=0)) # df_count_1.iloc[3,:].sum(axis=0) == le nombre de sequences ou de snapshots
+        data_count_2 = Data_count(df_count_2, df_count_2.iloc[3,:].sum(axis=0))
+        delta_pb = data_count_1.calcule_et_plot_delta_PB(data_count_2)
+        print("-------Ficher Delta_PB crée------------")
+        print("-------Figure Delta_Neq.png crée--------")
 
+        
     
 
     
