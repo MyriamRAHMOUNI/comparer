@@ -19,7 +19,7 @@ def plot_delta_Neq(dfd,nom_sortie):
     pyplot.plot('residus', 'Delta_Neq_abs', data = dfd, color = 'green', linewidth = 2, marker = 'o', markersize = 2)
     pyplot.xlabel('Residus')
     pyplot.ylabel('|Delta_Neq|')
-    pyplot.savefig(nom_sortie+'_Delta_Neq', format='png')
+    pyplot.savefig(nom_sortie+'_Delta_Neq.png')
     pyplot.clf() #vider le buffer pour que les images ne se superposent pas
 
 ## class pour les fichiers
@@ -54,27 +54,29 @@ class Data_count:
         self.dataframe = df
         self.nbr_seq = ns
     
-    #Methode qui calcule les delta-PB, enregistre le fichier .txt contenant les colonnes Residus et |Delta_PB| et enregisrte le plot |  Delta_PB| en fonction du Residus et la map de la dataframe delta PB 
+    #Methode qui calcule les delta-PB, enregistre le fichier .txt contenant les colonnes Residus et |Delta_PB| ainsi que le fichier.txt avec toute la matrice et enregisrte le plot |  Delta_PB| en fonction du Residus et la map de la dataframe delta PB 
     def calcule_et_plot_delta_PB(self, data_count_2, nom_sortie):
         df_freq_1 = self.dataframe/self.nbr_seq 
         df_freq_2 = data_count_2.dataframe/data_count_2.nbr_seq
         df_delta_pb = (df_freq_1 - df_freq_2).abs()
+        df_delta_pb.to_csv(nom_sortie+"_matrice_Delta_PB.txt", sep = " ", header = True)
 
-        mapp=pyplot.matshow(df_delta_pb)
-        pyplot.xticks(range(16), ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p'])
-        pyplot.yticks(list(df_delta_pb.index),fontsize=5)
-        pyplot.ylabel('Residus')
-        pyplot.colorbar(mapp)
-        pyplot.savefig(nom_sortie+"_MAP_delta_PB.png", bbox_inches="tight") 	
-        pyplot.clf()
-	
         delta_pb = df_delta_pb.sum(axis=1) 
         delta_pb.columns = ['Residus', '|Delta_PB|']    
         delta_pb.to_csv(nom_sortie+"_Delta_PB.txt", sep = " ", header = True)     
         pyplot.plot(delta_pb, linewidth = 2, marker = 'o', markersize = 2)
         pyplot.xlabel('Residus')
         pyplot.ylabel('|Delta_PB|')
-        pyplot.savefig(nom_sortie+"_Delta_PB.png", format='png')
+        pyplot.savefig(nom_sortie+"_Delta_PB.png")
+        pyplot.clf()
+
+        mapp=pyplot.matshow(df_delta_pb, interpolation = 'none',  aspect = 'auto')
+        pyplot.xticks(range(16), ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p'])
+        pyplot.yticks(list(df_delta_pb.index),fontsize=5)
+        pyplot.ylabel('Residus')
+        pyplot.colorbar(mapp)
+        pyplot.savefig(nom_sortie+"_MAP_delta_PB.png", bbox_inches="tight") 	
+
 
 if __name__ == "__main__":
     if sys.argv[1] == "help":
@@ -128,6 +130,7 @@ if __name__ == "__main__":
         data_count_1 = Data_count(df_count_1, df_count_1.iloc[3,:].sum(axis=0)) # df_count_1.iloc[3,:].sum(axis=0) == le nombre de snapshots
         data_count_2 = Data_count(df_count_2, df_count_2.iloc[3,:].sum(axis=0))
         delta_pb = data_count_1.calcule_et_plot_delta_PB(data_count_2, nom_sortie)
+        print("\n-------Fichier "+ nom_sortie+"_matrice_Delta_PB.txt crée")
         print("\n-------Fichier "+ nom_sortie + "_Delta_PB.png crée")
         print("\n-------Figure " + nom_sortie + "_MAP_delta_PB.png crée")
         print("\n-------Figure "+ nom_sortie + "_Delta_Neq.txt crée")
